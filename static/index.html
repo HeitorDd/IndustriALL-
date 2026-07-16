@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IndustriALL | Otimizador de Cronograma Semanal</title>
+    <!-- Google Fonts: Outfit for clean, modern Grotesk typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js for premium visualization charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <!-- Background Mesh Gradients -->
+    <div class="mesh-gradient" id="mesh-gradient-1"></div>
+    <div class="mesh-gradient" id="mesh-gradient-2"></div>
+
+    <div class="app-container">
+        <!-- Floating Glass Header -->
+        <header class="glass-header" id="app-header">
+            <div class="header-logo-container">
+                <div class="header-logo">
+                    <svg class="header-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Slanted Orange Dot (Parallelogram) -->
+                        <polygon points="56,12 76,12 64,28 44,28" fill="#FF4A1C"/>
+                        <!-- Left Slanted Leg (White) -->
+                        <polygon points="18,84 32,84 60,40 46,40" fill="#FFFFFF"/>
+                        <!-- Right Vertical Leg (White) with rounded top-left corner -->
+                        <path d="M 56,44 Q 68,44 68,54 L 68,84 H 56 Z" fill="#FFFFFF"/>
+                    </svg>
+                    <span class="logo-text">industri<span class="logo-text-orange">all</span></span>
+                </div>
+                <span class="logo-slogan">Driving industries into the future</span>
+            </div>
+            <div class="header-status">
+                <span class="status-indicator active" id="server-status-dot"></span>
+                <span class="status-text" id="server-status-text">Motor Conectado</span>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Upload Stage -->
+            <section class="stage-section" id="upload-stage">
+                <div class="stage-eyebrow">PLANEJAMENTO DE PCM</div>
+                <h1 class="stage-title">Otimizador de Cronograma Semanal</h1>
+                <p class="stage-subtitle">Carregue o arquivo de backlog em formato Excel (.xlsx) para calcular a distribuição ótima de ordens de serviço, respeitando habilidades, limites diários de capacidade, precedências e paradas.</p>
+                
+                <!-- Double Bezel Dropzone -->
+                <div class="double-bezel-outer" id="dropzone-outer">
+                    <div class="double-bezel-inner drag-drop-zone" id="dropzone">
+                        <input type="file" id="file-input" accept=".xlsx, .xls" hidden>
+                        <div class="upload-icon-wrapper">
+                            <svg class="upload-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                        <h3 class="upload-title">Arraste seu arquivo Excel aqui</h3>
+                        <p class="upload-description">Ou clique para navegar nos arquivos do computador</p>
+                        <div class="file-info-badge" id="file-info-badge" style="display: none;">
+                            <span class="file-name-text" id="file-name-text">backlog.xlsx</span>
+                            <button class="remove-file-btn" id="remove-file-btn">&times;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-bar" id="action-bar" style="display: none;">
+                    <button class="btn btn-primary" id="btn-process">
+                        <span>Otimizar Cronograma</span>
+                        <div class="btn-icon">↗</div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Results Stage (hidden by default) -->
+            <section class="stage-section" id="results-stage" style="display: none;">
+                <div class="results-header">
+                    <div>
+                        <div class="stage-eyebrow">RESULTADO DA PROGRAMAÇÃO</div>
+                        <h1 class="stage-title">Cronograma Semanal Fechado</h1>
+                    </div>
+                    <button class="btn btn-secondary" id="btn-new-run">
+                        <span>Carregar Outro Backlog</span>
+                    </button>
+                </div>
+
+                <!-- Bento Metrics Grid -->
+                <div class="bento-grid">
+                    <!-- Total OS Card -->
+                    <div class="bento-card col-span-4" id="metric-total-card">
+                        <div class="card-inner">
+                            <div class="metric-label">OS's Programadas</div>
+                            <div class="metric-value" id="val-total-os">0</div>
+                            <p class="metric-desc">Total de ordens executadas na semana</p>
+                        </div>
+                    </div>
+
+                    <!-- Priority breakdown -->
+                    <div class="bento-card col-span-8" id="metric-priority-card">
+                        <div class="card-inner">
+                            <div class="metric-label">Distribuição de Prioridades</div>
+                            <div class="priority-badges-row">
+                                <div class="priority-item">
+                                    <div class="priority-dot priority-z"></div>
+                                    <div class="priority-val-lbl">Critico Z: <span id="val-z-os" class="bold-val">0</span></div>
+                                </div>
+                                <div class="priority-item">
+                                    <div class="priority-dot priority-a"></div>
+                                    <div class="priority-val-lbl">Alta A: <span id="val-a-os" class="bold-val">0</span></div>
+                                </div>
+                                <div class="priority-item">
+                                    <div class="priority-dot priority-b"></div>
+                                    <div class="priority-val-lbl">Média B: <span id="val-b-os" class="bold-val">0</span></div>
+                                </div>
+                                <div class="priority-item">
+                                    <div class="priority-dot priority-c"></div>
+                                    <div class="priority-val-lbl">Baixa C: <span id="val-c-os" class="bold-val">0</span></div>
+                                </div>
+                            </div>
+                            <p class="metric-desc">Priorização obrigatória baseada em impacto produtivo</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters & Controls bar -->
+                <div class="controls-bar">
+                    <div class="filter-group">
+                        <span class="filter-label">Filtrar por prioridade:</span>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">Todas</button>
+                            <button class="filter-btn" data-filter="Z">Z</button>
+                            <button class="filter-btn" data-filter="A">A</button>
+                            <button class="filter-btn" data-filter="B">B</button>
+                            <button class="filter-btn" data-filter="C">C</button>
+                        </div>
+                    </div>
+                    <div class="filter-group">
+                        <span class="filter-label">Condição:</span>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter-cond="all">Todas</button>
+                            <button class="filter-btn" data-filter-cond="Parada">Parada</button>
+                            <button class="filter-btn" data-filter-cond="Operando">Operando</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekly Columns Calendar -->
+                <h2 class="section-subtitle">Visualização do Cronograma</h2>
+                <div class="weekly-board" id="weekly-board">
+                    <!-- Day 1 (Segunda) -->
+                    <div class="day-column" data-day="1">
+                        <div class="day-header">
+                            <div class="day-name">Segunda-feira</div>
+                            <div class="day-sub">Dia 1</div>
+                        </div>
+                        <div class="cards-list" id="day-1-list"></div>
+                    </div>
+                    <!-- Day 2 (Terça) -->
+                    <div class="day-column" data-day="2">
+                        <div class="day-header">
+                            <div class="day-name">Terça-feira</div>
+                            <div class="day-sub">Dia 2</div>
+                        </div>
+                        <div class="cards-list" id="day-2-list"></div>
+                    </div>
+                    <!-- Day 3 (Quarta) -->
+                    <div class="day-column" data-day="3">
+                        <div class="day-header">
+                            <div class="day-name">Quarta-feira</div>
+                            <div class="day-sub" id="day-3-sub">Dia 3 (Parada)</div>
+                        </div>
+                        <div class="cards-list" id="day-3-list"></div>
+                    </div>
+                    <!-- Day 4 (Quinta) -->
+                    <div class="day-column" data-day="4">
+                        <div class="day-header">
+                            <div class="day-name">Quinta-feira</div>
+                            <div class="day-sub" id="day-4-sub">Dia 4 (Parada)</div>
+                        </div>
+                        <div class="cards-list" id="day-4-list"></div>
+                    </div>
+                    <!-- Day 5 (Sexta) -->
+                    <div class="day-column" data-day="5">
+                        <div class="day-header">
+                            <div class="day-name">Sexta-feira</div>
+                            <div class="day-sub">Dia 5</div>
+                        </div>
+                        <div class="cards-list" id="day-5-list"></div>
+                    </div>
+                </div>
+
+                <!-- Resource Utilization & Chart Bento block -->
+                <h2 class="section-subtitle" style="margin-top: 48px;">Utilização de Recursos</h2>
+                <div class="resource-layout-grid">
+                    <!-- Resource Progress Bars -->
+                    <div class="bento-card col-span-5" id="resource-gauges-card">
+                        <div class="card-inner">
+                            <h3 class="card-title">Carga Semanal de Homens-Hora</h3>
+                            <div class="gauge-container" id="gauges-container">
+                                <!-- Dynamically filled by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart JS Container -->
+                    <div class="bento-card col-span-7" id="resource-chart-card">
+                        <div class="card-inner chart-card-inner">
+                            <h3 class="card-title">Distribuição Diária de HH</h3>
+                            <div class="canvas-wrapper">
+                                <canvas id="utilization-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- OS Detail Modal (Overlay) -->
+    <div class="modal-overlay" id="detail-modal" style="display: none;">
+        <div class="double-bezel-outer modal-container" id="modal-container">
+            <div class="double-bezel-inner modal-content" id="modal-content">
+                <button class="modal-close-btn" id="modal-close-btn">&times;</button>
+                <div class="modal-header">
+                    <span class="modal-eyebrow" id="modal-os-priority-badge">Prioridade Z</span>
+                    <h2 class="modal-title" id="modal-os-title">Ordem de Serviço</h2>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="modal-info-grid">
+                        <div class="info-block">
+                            <div class="info-label">Duração Total</div>
+                            <div class="info-val" id="modal-os-duration">0 horas</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="info-label">Predecessora</div>
+                            <div class="info-val" id="modal-os-predecessor">Nenhuma</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="info-label">Condição de Execução</div>
+                            <div class="info-val" id="modal-os-condition">Operando</div>
+                        </div>
+                        <div class="info-block">
+                            <div class="info-label">Término Estimado</div>
+                            <div class="info-val" id="modal-os-completion">Hora 0</div>
+                        </div>
+                    </div>
+
+                    <h4 class="modal-section-title">Lista de Tarefas da OS (Sequencial)</h4>
+                    <div class="modal-table-container">
+                        <table class="modal-table">
+                            <thead>
+                                <tr>
+                                    <th>Tarefa</th>
+                                    <th>Habilidade</th>
+                                    <th>Duração (h)</th>
+                                    <th>Equipe (Qtd)</th>
+                                    <th>Consumo Total (HH)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="modal-tasks-tbody">
+                                <!-- Dynamically filled by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner Overlay -->
+    <div class="loading-overlay" id="loading-overlay" style="display: none;">
+        <div class="spinner-wrapper">
+            <div class="spinner"></div>
+            <div class="loading-text">Processando Otimização...</div>
+        </div>
+    </div>
+
+    <script src="/index.js"></script>
+</body>
+</html>
