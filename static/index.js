@@ -1,10 +1,10 @@
-// Global State
+// Estado Global da Aplicação
 let appData = null;
 let activeFilter = 'all';
 let activeFilterCond = 'all';
 let utilizationChart = null;
 
-// DOM Elements
+// Elementos do DOM
 const dropzone = document.getElementById('dropzone');
 const fileInput = document.getElementById('file-input');
 const fileInfoBadge = document.getElementById('file-info-badge');
@@ -14,19 +14,19 @@ const actionBar = document.getElementById('action-bar');
 const btnProcess = document.getElementById('btn-process');
 const loadingOverlay = document.getElementById('loading-overlay');
 
-// Stage toggling elements
+// Elementos de alternância de tela (stages)
 const uploadStage = document.getElementById('upload-stage');
 const resultsStage = document.getElementById('results-stage');
 const btnNewRun = document.getElementById('btn-new-run');
 
-// Metrics elements
+// Elementos dos cartões de métricas do Bento Grid
 const valTotalOs = document.getElementById('val-total-os');
 const valZOs = document.getElementById('val-z-os');
 const valAOs = document.getElementById('val-a-os');
 const valBOs = document.getElementById('val-b-os');
 const valCOs = document.getElementById('val-c-os');
 
-// Modal elements
+// Elementos da gaveta/modal de detalhes da OS
 const detailModal = document.getElementById('detail-modal');
 const modalCloseBtn = document.getElementById('modal-close-btn');
 const modalOsTitle = document.getElementById('modal-os-title');
@@ -37,7 +37,7 @@ const modalOsCondition = document.getElementById('modal-os-condition');
 const modalOsCompletion = document.getElementById('modal-os-completion');
 const modalTasksTbody = document.getElementById('modal-tasks-tbody');
 
-// Initialize event listeners
+// Inicializa os ouvintes de eventos da página
 document.addEventListener('DOMContentLoaded', () => {
     setupUploadHandlers();
     setupProcessHandlers();
@@ -46,12 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================================================
-// UPLOAD HANDLERS (DRAG & DROP)
+// TRATADORES DE UPLOAD (ARRASTAR & SOLTAR / DRAG & DROP)
 // ==========================================================================
 function setupUploadHandlers() {
-    // Click dropzone to trigger input
+    // Clique na dropzone dispara o input de arquivo oculto
     dropzone.addEventListener('click', (e) => {
-        // Prevent click if clicking the remove button
+        // Impede o clique se o botão de remover arquivo for clicado
         if (e.target === removeFileBtn) return;
         fileInput.click();
     });
@@ -62,7 +62,7 @@ function setupUploadHandlers() {
         }
     });
 
-    // Drag-over styling
+    // Estilização ao arrastar arquivo sobre a dropzone
     ['dragenter', 'dragover'].forEach(eventName => {
         dropzone.addEventListener(eventName, (e) => {
             e.preventDefault();
@@ -79,17 +79,17 @@ function setupUploadHandlers() {
         }, false);
     });
 
-    // File drop
+    // Evento de soltar (drop) arquivo na zona
     dropzone.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
         const files = dt.files;
         if (files.length > 0) {
-            fileInput.files = files; // Sync input files list
+            fileInput.files = files; // Sincroniza a lista de arquivos do input
             handleSelectedFile(files[0]);
         }
     });
 
-    // Remove file button
+    // Ação do botão de remover arquivo selecionado
     removeFileBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -108,7 +108,7 @@ function handleSelectedFile(file) {
     fileInfoBadge.style.display = 'flex';
     actionBar.style.display = 'block';
     
-    // Hide details during dropzone selection
+    // Oculta textos e ícone padrão de upload ao selecionar um arquivo
     dropzone.querySelector('.upload-icon-wrapper').style.display = 'none';
     dropzone.querySelector('.upload-title').style.display = 'none';
     dropzone.querySelector('.upload-description').style.display = 'none';
@@ -119,14 +119,14 @@ function resetUpload() {
     fileInfoBadge.style.display = 'none';
     actionBar.style.display = 'none';
     
-    // Restore dropzone texts
+    // Restaura os textos e ícones padrão da dropzone
     dropzone.querySelector('.upload-icon-wrapper').style.display = 'flex';
     dropzone.querySelector('.upload-title').style.display = 'block';
     dropzone.querySelector('.upload-description').style.display = 'block';
 }
 
 // ==========================================================================
-// API CLIENT & SOLVER PROCESS
+// CLIENTE API & PROCESSO DE OTIMIZAÇÃO (FASTAPI)
 // ==========================================================================
 function setupProcessHandlers() {
     btnProcess.addEventListener('click', async () => {
@@ -135,7 +135,7 @@ function setupProcessHandlers() {
         const formData = new FormData();
         formData.append("file", fileInput.files[0]);
         
-        // Show loader
+        // Exibe overlay de processamento (loader animado)
         loadingOverlay.style.display = 'flex';
         
         try {
@@ -151,11 +151,11 @@ function setupProcessHandlers() {
             
             appData = await response.json();
             
-            // Hide upload, show results
+            // Oculta tela de upload e revela tela de resultados
             uploadStage.style.display = 'none';
             resultsStage.style.display = 'block';
             
-            // Render the dashboard
+            // Renderiza os dados no dashboard
             renderDashboard(appData);
             
         } catch (error) {
@@ -167,7 +167,7 @@ function setupProcessHandlers() {
     });
 
     btnNewRun.addEventListener('click', () => {
-        // Reset state and views
+        // Redefine estados locais e telas para uma nova simulação
         appData = null;
         resetUpload();
         resultsStage.style.display = 'none';
@@ -181,17 +181,17 @@ function setupProcessHandlers() {
 }
 
 // ==========================================================================
-// RENDERING DASHBOARD DATA
+// RENDERIZAÇÃO DOS DADOS DO DASHBOARD
 // ==========================================================================
 function renderDashboard(data) {
-    // 1. Populate Metrics Cards
+    // 1. Preenche os cartões de métricas do Bento Grid
     valTotalOs.textContent = data.metrics.n_os;
     valZOs.textContent = data.metrics.n_Z;
     valAOs.textContent = data.metrics.n_A;
     valBOs.textContent = data.metrics.n_B;
     valCOs.textContent = data.metrics.n_C;
     
-    // 2. Render Resource HH Progress Bars (Gauges)
+    // 2. Renderiza as barras horizontais de utilização geral de HH
     const gaugesContainer = document.getElementById('gauges-container');
     gaugesContainer.innerHTML = '';
     
@@ -203,7 +203,7 @@ function renderDashboard(data) {
     ];
     
     skillsMapping.forEach(skill => {
-        // Compute average utilization percentage across all 5 days
+        // Calcula a média de utilização percentual ao longo dos 5 dias
         const values = data.daily_utilization[skill.key];
         const averagePct = Math.round(values.reduce((a, b) => a + b, 0) / values.length);
         
@@ -221,7 +221,7 @@ function renderDashboard(data) {
         gaugesContainer.insertAdjacentHTML('beforeend', gaugeHTML);
     });
     
-    // 3. Render Weekly Board Columns
+    // 3. Renderiza as colunas da timeline semanal de Segunda a Sexta
     for (let day = 1; day <= 5; day++) {
         const listContainer = document.getElementById(`day-${day}-list`);
         listContainer.innerHTML = '';
@@ -250,7 +250,7 @@ function renderDashboard(data) {
         });
     }
     
-    // Setup click handlers for all generated OS Cards to open detail modal
+    // Vincula ouvintes de cliques em todos os cards para abrir modal de detalhes
     document.querySelectorAll('.os-card').forEach(card => {
         card.addEventListener('click', () => {
             const osId = card.getAttribute('data-os-id');
@@ -258,12 +258,12 @@ function renderDashboard(data) {
         });
     });
     
-    // 4. Render Chart.js Multi-Bar Daily Utilization
+    // 4. Renderiza o gráfico Chart.js de barras diárias de capacidade
     renderCharts(data);
 }
 
 // ==========================================================================
-// CHARTS (CHART.JS CONFIGURATION)
+// CONFIGURAÇÃO E PLOTAGEM DE GRÁFICOS (CHART.JS)
 // ==========================================================================
 function renderCharts(data) {
     const ctx = document.getElementById('utilization-chart').getContext('2d');
@@ -272,28 +272,28 @@ function renderCharts(data) {
         utilizationChart.destroy();
     }
     
-    // Get style settings from CSS property colors
+    // Obtém variáveis de cor e estilização injetadas a partir das propriedades CSS
     const style = getComputedStyle(document.documentElement);
-    const textPrimary = style.getPropertyValue('--text-primary').trim() || '#f0f0f3';
-    const textMuted = style.getPropertyValue('--text-muted').trim() || '#6e6e77';
+    const textPrimary = style.getPropertyValue('--text-primary').trim() || '#ffffff';
+    const textMuted = style.getPropertyValue('--text-muted').trim() || '#57708c';
     
     const datasets = [
         {
             label: 'Mecânico',
             data: data.daily_utilization.mecanico,
-            backgroundColor: style.getPropertyValue('--color-a').trim() || '#3d5a80',
+            backgroundColor: style.getPropertyValue('--color-a').trim() || '#00508a',
             borderRadius: 6
         },
         {
             label: 'Elétrico',
             data: data.daily_utilization.eletrico,
-            backgroundColor: style.getPropertyValue('--color-z').trim() || '#e07a5f',
+            backgroundColor: style.getPropertyValue('--color-z').trim() || '#ff4a1c',
             borderRadius: 6
         },
         {
             label: 'Lubrificador',
             data: data.daily_utilization.lubrificador,
-            backgroundColor: style.getPropertyValue('--color-b').trim() || '#7d9b84',
+            backgroundColor: style.getPropertyValue('--color-b').trim() || '#00828a',
             borderRadius: 6
         },
         {
@@ -370,10 +370,10 @@ function renderCharts(data) {
 }
 
 // ==========================================================================
-// FILTERS (CARD VISIBILITY FILTERING)
+// FILTROS (FILTRAGEM DE EXIBIÇÃO DE OS CARDS)
 // ==========================================================================
 function setupFilterHandlers() {
-    // Priority filters
+    // Filtros de prioridade
     const filterButtons = document.querySelectorAll('[data-filter]');
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -384,7 +384,7 @@ function setupFilterHandlers() {
         });
     });
     
-    // Condition filters
+    // Filtros de condição operacional
     const filterCondButtons = document.querySelectorAll('[data-filter-cond]');
     filterCondButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -426,12 +426,12 @@ function findOSData(osId) {
 }
 
 // ==========================================================================
-// MODAL DIALOG (DETAIL SIDE-OVER / OVERLAY)
+// MODAL DIALOG (EXIBIÇÃO DE DETALHES DE OS)
 // ==========================================================================
 function setupModalHandlers() {
     modalCloseBtn.addEventListener('click', closeModal);
     
-    // Close on click outside container
+    // Fecha o modal ao clicar fora da área de conteúdo (overlay escuro)
     detailModal.addEventListener('click', (e) => {
         if (e.target === detailModal) {
             closeModal();
@@ -443,24 +443,24 @@ function openDetailModal(osId) {
     const osData = findOSData(osId);
     if (!osData) return;
     
-    // Set headers
+    // Define títulos e prioridades
     modalOsTitle.textContent = `Ordem de Serviço: ${osId}`;
     modalOsPriorityBadge.textContent = `Prioridade ${osData.priority}`;
     
-    // Reset priority class badge styling
+    // Reinicia as classes e cores do badge de prioridade do modal
     modalOsPriorityBadge.className = 'modal-eyebrow';
-    if (osData.priority === 'Z') modalOsPriorityBadge.style.background = 'rgba(224, 122, 95, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-z)';
-    if (osData.priority === 'A') modalOsPriorityBadge.style.background = 'rgba(61, 90, 128, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-a)';
-    if (osData.priority === 'B') modalOsPriorityBadge.style.background = 'rgba(125, 155, 132, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-b)';
-    if (osData.priority === 'C') modalOsPriorityBadge.style.background = 'rgba(233, 196, 106, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-c)';
+    if (osData.priority === 'Z') modalOsPriorityBadge.style.background = 'rgba(255, 74, 28, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-z)';
+    if (osData.priority === 'A') modalOsPriorityBadge.style.background = 'rgba(0, 80, 138, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-a)';
+    if (osData.priority === 'B') modalOsPriorityBadge.style.background = 'rgba(0, 130, 138, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-b)';
+    if (osData.priority === 'C') modalOsPriorityBadge.style.background = 'rgba(110, 126, 138, 0.15)', modalOsPriorityBadge.style.color = 'var(--color-c)';
     
-    // Set stats
+    // Define métricas de duração, predecessora e horário de término
     modalOsDuration.textContent = `${osData.duration} horas`;
     modalOsPredecessor.textContent = osData.predecessor || 'Nenhuma';
     modalOsCondition.textContent = osData.condition;
     modalOsCompletion.textContent = `Hora ${osData.end_hour}`;
     
-    // Fill task table body
+    // Preenche as linhas da tabela de tarefas do modal
     modalTasksTbody.innerHTML = '';
     osData.tasks.forEach((task, idx) => {
         const rowHTML = `
@@ -475,7 +475,7 @@ function openDetailModal(osId) {
         modalTasksTbody.insertAdjacentHTML('beforeend', rowHTML);
     });
     
-    // Show modal
+    // Abre a visualização do modal
     detailModal.style.display = 'flex';
 }
 

@@ -4,30 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IndustriALL | Otimizador de Cronograma Semanal</title>
-    <!-- Google Fonts: Outfit for clean, modern Grotesk typography -->
+    <!-- Google Fonts: Outfit para tipografia moderna e limpa -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chart.js for premium visualization charts -->
+    <!-- Chart.js para visualização premium de gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <!-- Background Mesh Gradients -->
+    <!-- Grades de mesh gradient para fundo do dashboard -->
     <div class="mesh-gradient" id="mesh-gradient-1"></div>
     <div class="mesh-gradient" id="mesh-gradient-2"></div>
 
     <div class="app-container">
-        <!-- Floating Glass Header -->
+        <!-- Cabeçalho flutuante translúcido (Glass Header) -->
         <header class="glass-header" id="app-header">
             <div class="header-logo-container">
                 <div class="header-logo">
                     <svg class="header-logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Slanted Orange Dot (Parallelogram) -->
+                        <!-- Ponto laranja inclinado da logo (Paralelogramo) -->
                         <polygon points="56,12 76,12 64,28 44,28" fill="#FF4A1C"/>
-                        <!-- Left Slanted Leg (White) -->
+                        <!-- Perna esquerda inclinada da logo (Branca) -->
                         <polygon points="18,84 32,84 60,40 46,40" fill="#FFFFFF"/>
-                        <!-- Right Vertical Leg (White) with rounded top-left corner -->
+                        <!-- Perna direita vertical com topo arredondado (Branca) -->
                         <path d="M 56,44 Q 68,44 68,54 L 68,84 H 56 Z" fill="#FFFFFF"/>
                     </svg>
                     <span class="logo-text">industri<span class="logo-text-orange">all</span></span>
@@ -41,13 +41,13 @@
         </header>
 
         <main class="main-content">
-            <!-- Upload Stage -->
+            <!-- Tela Inicial de Upload de Arquivos -->
             <section class="stage-section" id="upload-stage">
                 <div class="stage-eyebrow">PLANEJAMENTO DE PCM</div>
                 <h1 class="stage-title">Otimizador de Cronograma Semanal</h1>
                 <p class="stage-subtitle">Carregue o arquivo de backlog em formato Excel (.xlsx) para calcular a distribuição ótima de ordens de serviço, respeitando habilidades, limites diários de capacidade, precedências e paradas.</p>
                 
-                <!-- Double Bezel Dropzone -->
+                <!-- Área de Drag and Drop com moldura concêntrica -->
                 <div class="double-bezel-outer" id="dropzone-outer">
                     <div class="double-bezel-inner drag-drop-zone" id="dropzone">
                         <input type="file" id="file-input" accept=".xlsx, .xls" hidden>
@@ -75,7 +75,7 @@
                 </div>
             </section>
 
-            <!-- Results Stage (hidden by default) -->
+            <!-- Tela de Resultados Otimizados (oculta por padrão) -->
             <section class="stage-section" id="results-stage" style="display: none;">
                 <div class="results-header">
                     <div>
@@ -87,9 +87,9 @@
                     </button>
                 </div>
 
-                <!-- Bento Metrics Grid -->
+                <!-- Grade Bento de Métricas e KPIs -->
                 <div class="bento-grid">
-                    <!-- Total OS Card -->
+                    <!-- Cartão de Total de OSs -->
                     <div class="bento-card col-span-4" id="metric-total-card">
                         <div class="card-inner">
                             <div class="metric-label">OS's Programadas</div>
@@ -98,14 +98,14 @@
                         </div>
                     </div>
 
-                    <!-- Priority breakdown -->
+                    <!-- Distribuição por Criticidade de Prioridades -->
                     <div class="bento-card col-span-8" id="metric-priority-card">
                         <div class="card-inner">
                             <div class="metric-label">Distribuição de Prioridades</div>
                             <div class="priority-badges-row">
                                 <div class="priority-item">
                                     <div class="priority-dot priority-z"></div>
-                                    <div class="priority-val-lbl">Critico Z: <span id="val-z-os" class="bold-val">0</span></div>
+                                    <div class="priority-val-lbl">Crítico Z: <span id="val-z-os" class="bold-val">0</span></div>
                                 </div>
                                 <div class="priority-item">
                                     <div class="priority-dot priority-a"></div>
@@ -125,7 +125,7 @@
                     </div>
                 </div>
 
-                <!-- Filters & Controls bar -->
+                <!-- Barra de Controles e Filtros Dinâmicos -->
                 <div class="controls-bar">
                     <div class="filter-group">
                         <span class="filter-label">Filtrar por prioridade:</span>
@@ -147,10 +147,10 @@
                     </div>
                 </div>
 
-                <!-- Weekly Columns Calendar -->
+                <!-- Calendário Semanal Organizador (Timeline) -->
                 <h2 class="section-subtitle">Visualização do Cronograma</h2>
                 <div class="weekly-board" id="weekly-board">
-                    <!-- Day 1 (Segunda) -->
+                    <!-- Dia 1 (Segunda-feira) -->
                     <div class="day-column" data-day="1">
                         <div class="day-header">
                             <div class="day-name">Segunda-feira</div>
@@ -158,7 +158,7 @@
                         </div>
                         <div class="cards-list" id="day-1-list"></div>
                     </div>
-                    <!-- Day 2 (Terça) -->
+                    <!-- Dia 2 (Terça-feira) -->
                     <div class="day-column" data-day="2">
                         <div class="day-header">
                             <div class="day-name">Terça-feira</div>
@@ -166,7 +166,7 @@
                         </div>
                         <div class="cards-list" id="day-2-list"></div>
                     </div>
-                    <!-- Day 3 (Quarta) -->
+                    <!-- Dia 3 (Quarta-feira - Janela de Parada) -->
                     <div class="day-column" data-day="3">
                         <div class="day-header">
                             <div class="day-name">Quarta-feira</div>
@@ -174,7 +174,7 @@
                         </div>
                         <div class="cards-list" id="day-3-list"></div>
                     </div>
-                    <!-- Day 4 (Quinta) -->
+                    <!-- Dia 4 (Quinta-feira - Janela de Parada) -->
                     <div class="day-column" data-day="4">
                         <div class="day-header">
                             <div class="day-name">Quinta-feira</div>
@@ -182,7 +182,7 @@
                         </div>
                         <div class="cards-list" id="day-4-list"></div>
                     </div>
-                    <!-- Day 5 (Sexta) -->
+                    <!-- Dia 5 (Sexta-feira) -->
                     <div class="day-column" data-day="5">
                         <div class="day-header">
                             <div class="day-name">Sexta-feira</div>
@@ -192,20 +192,20 @@
                     </div>
                 </div>
 
-                <!-- Resource Utilization & Chart Bento block -->
+                <!-- Bloco Bento de Gráficos e Ocupação de Habilidades -->
                 <h2 class="section-subtitle" style="margin-top: 48px;">Utilização de Recursos</h2>
                 <div class="resource-layout-grid">
-                    <!-- Resource Progress Bars -->
+                    <!-- Medidores de Ocupação Média Semanal -->
                     <div class="bento-card col-span-5" id="resource-gauges-card">
                         <div class="card-inner">
                             <h3 class="card-title">Carga Semanal de Homens-Hora</h3>
                             <div class="gauge-container" id="gauges-container">
-                                <!-- Dynamically filled by JS -->
+                                <!-- Preenchido dinamicamente pelo JavaScript -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Chart JS Container -->
+                    <!-- Gráfico Diário por Especialidade (Chart.js) -->
                     <div class="bento-card col-span-7" id="resource-chart-card">
                         <div class="card-inner chart-card-inner">
                             <h3 class="card-title">Distribuição Diária de HH</h3>
@@ -219,7 +219,7 @@
         </main>
     </div>
 
-    <!-- OS Detail Modal (Overlay) -->
+    <!-- Modal Detalhado de Ordens de Serviço (Overlay) -->
     <div class="modal-overlay" id="detail-modal" style="display: none;">
         <div class="double-bezel-outer modal-container" id="modal-container">
             <div class="double-bezel-inner modal-content" id="modal-content">
@@ -262,7 +262,7 @@
                                 </tr>
                             </thead>
                             <tbody id="modal-tasks-tbody">
-                                <!-- Dynamically filled by JS -->
+                                <!-- Preenchido dinamicamente pelo JavaScript -->
                             </tbody>
                         </table>
                     </div>
@@ -271,7 +271,7 @@
         </div>
     </div>
 
-    <!-- Loading Spinner Overlay -->
+    <!-- Overlay animado de processamento/carregamento -->
     <div class="loading-overlay" id="loading-overlay" style="display: none;">
         <div class="spinner-wrapper">
             <div class="spinner"></div>

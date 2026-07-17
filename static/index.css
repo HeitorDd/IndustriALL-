@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DESIGN SYSTEM - Ethereal Glass Vibe Archetype (OLED Dark Mode)
+   SISTEMA DE DESIGN - Ethereal Glass Vibe Archetype (OLED Dark Mode)
    ========================================================================== */
 
 :root {
@@ -8,25 +8,25 @@
     --text-secondary: #8da8c4; /* Ice Slate Blue */
     --text-muted: #57708c;
     
-    /* Double Bezel Glass Variables */
+    /* Variáveis do Vidro Transparente (Glassmorphism) */
     --glass-bg: rgba(1, 33, 63, 0.75); /* Navy tint glass */
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-outer-bg: rgba(1, 33, 63, 0.35);
     --glass-outer-border: rgba(255, 255, 255, 0.04);
     
-    /* Priority Accent Colors */
+    /* Cores de Destaque por Prioridade */
     --color-z: #ff4a1c; /* Brand Orange-Red */
     --color-a: #00508a; /* Corporate Blue */
     --color-b: #00828a; /* Corporate Teal */
     --color-c: #6e7e8a; /* Ice Gray */
     
-    /* Spring physics transition curve */
+    /* Curva de transição baseada em física de mola */
     --spring-transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     --spring-transition-fast: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ==========================================================================
-   RESET & FUNDAMENTALS
+   RESETS E FUNDAMENTOS
    ========================================================================== */
 * {
     box-sizing: border-box;
@@ -44,7 +44,7 @@ body {
     line-height: 1.5;
 }
 
-/* Background Mesh Orbs */
+/* Orbes de Degradê de Fundo */
 .mesh-gradient {
     position: fixed;
     border-radius: 50%;
@@ -70,7 +70,7 @@ body {
     left: -100px;
 }
 
-/* Main Container */
+/* Container Principal */
 .app-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -78,7 +78,7 @@ body {
 }
 
 /* ==========================================================================
-   HEADER
+   CABEÇALHO (HEADER)
    ========================================================================== */
 .glass-header {
     display: flex;
@@ -163,7 +163,7 @@ body {
 }
 
 /* ==========================================================================
-   LAYOUT STRUCTURE & SECTIONS
+   ESTRUTURA DE LAYOUT E SEÇÕES
    ========================================================================== */
 .main-content {
     animation: fadeIn 0.8s var(--spring-transition);
