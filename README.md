@@ -4,7 +4,7 @@ Este projeto consiste em uma ferramenta de otimização de programação semanal
 
 ---
 
-## 🚀 Guia de Clonagem, Instalação e Execução
+## Guia de Clonagem, Instalação e Execução
 
 Siga os passos abaixo para baixar o código e rodar a aplicação em sua máquina local.
 
@@ -50,7 +50,7 @@ Com o servidor ativo:
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## Tecnologias Utilizadas
 - **Backend**: FastAPI (Python) - Servidor web assíncrono de alto desempenho.
 - **Otimização**: Algoritmo Heurístico Guloso desenvolvido com Pandas e NumPy para manipulação rápida de matrizes.
 - **Frontend**: HTML5, Vanilla CSS3 (Visual Ethereal Glass com paleta de cores corporativa) e JavaScript ES6.
